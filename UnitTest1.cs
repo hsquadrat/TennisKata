@@ -30,6 +30,57 @@ public class SpielTests
         //Assert
         Assert.Equal("Love-All",result);
     }
+    [Fact]
+    public void Game_Spielstand_Fifteen_All()
+    {
+        //Arrange
+        var spiel = new Spiel(player1, player2,spielregelCalculator);
+        
+        //Act
+        spiel.Play();
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        var result = spiel.GetSpielstand();
+        //Assert
+        Assert.Equal("Fifteen-All",result);
+    }
+    [Fact]
+    public void Game_Spielstand_Deuce()
+    {
+        //Arrange
+        var spiel = new Spiel(player1, player2,spielregelCalculator);
+        
+        //Act
+        spiel.Play();
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        var result = spiel.GetSpielstand();
+        //Assert
+        Assert.Equal("Deuce",result);
+    }
+    [Fact]
+    public void Game_Spielstand_Advantage_Player1()
+    {
+        //Arrange
+        var spiel = new Spiel(player1, player2,spielregelCalculator);
+        
+        //Act
+        spiel.Play();
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        spiel.SetSpielstand(player1);
+        var result = spiel.GetSpielstand();
+        //Assert
+        Assert.Equal("Advantage player1",result);
+    }
 }
 
 public class Spiel
