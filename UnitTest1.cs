@@ -4,12 +4,13 @@ public class SpielTests
 {
     private  Player player1 = new Player("Holger Schwinge");
     private  Player player2 = new Player("Alex Gross");
-
+    private SpielregelCalculator spielregelCalculator = new SpielregelCalculator();
+    
     [Fact]
     public void Game_Is_Started()
     {
         //Arrange
-        var spiel = new Spiel(player1, player2);
+        var spiel = new Spiel(player1, player2,spielregelCalculator);
         //Act
         spiel.Play();
         
@@ -21,11 +22,11 @@ public class SpielTests
     public void Game_Is_Started_Spielstand_Love_To_Love()
     {
         //Arrange
-        var spiel = new Spiel(player1, player2);
+        var spiel = new Spiel(player1, player2,spielregelCalculator);
         
         //Act
         spiel.Play();
-        var result = spiel.Spielstand();
+        var result = spiel.GetSpielstand();
         //Assert
         Assert.Equal("Love:Love",result);
     }
@@ -42,10 +43,13 @@ public class Spiel
 
     private bool unentschieden;
 
-    public Spiel(Player player1, Player player2)
+    private SpielregelCalculator spielRegelCalculator;
+    
+    public Spiel(Player player1, Player player2,SpielregelCalculator spielRegelCalculator )
     {
         this.player1 = player1;
         this.player2 = player2;
+        this.spielRegelCalculator = spielRegelCalculator;
     }
 
     public void Play()
@@ -63,11 +67,37 @@ public class Spiel
         return spielStart;
     }
 
-    public string Spielstand()
+    public string GetSpielstand()
+    {
+        return spielRegelCalculator.Calculate(player1,player2);
+    }
+}
+
+public interface ISpielregelCalculator
+{
+   public string Calculate(Player player1, Player player2);
+}
+
+public interface IRules
+{
+    public string Calculate(int stand1 , int stand2);
+}
+
+public class RuleHochzählen : IRules
+{
+    public string Calculate(int stand1, int stand2)
+    {
+        throw new NotImplementedException();
+    }
+}
+public class SpielregelCalculator : ISpielregelCalculator
+{
+    public string Calculate(Player player1, Player player2)
     {
         return player1.GetSpielstandzhähler() + ":" + player2.GetSpielstandzhähler();
     }
 }
+
 
 public class Player
 {
