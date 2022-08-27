@@ -81,6 +81,21 @@ public class SpielTests
         //Assert
         Assert.Equal("Advantage player1",result);
     }
+    [Fact]
+    public void Game_Spielstand_Love_To_Fifteen()
+    {
+        //Arrange
+        var spiel = new Spiel(player1, player2,spielregelCalculator);
+        
+        //Act
+        spiel.Play();
+        spiel.SetSpielstand(player1);
+        spiel.SetSpielstand(player2);
+        spiel.SetSpielstand(player1);
+        var result = spiel.GetSpielstand();
+        //Assert
+        Assert.Equal("Thirty-Fifteen",result);
+    }
 }
 
 public class Spiel
