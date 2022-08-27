@@ -4,7 +4,7 @@ public class SpielTests
 {
     private  Player player1 = new Player("Holger Schwinge");
     private  Player player2 = new Player("Alex Gross");
-    private SpielregelCalculator spielregelCalculator = new SpielregelCalculator();
+    private SpielRegelCalculator spielregelCalculator = new SpielRegelCalculator();
     
     [Fact]
     public void Game_Is_Started()
@@ -28,7 +28,7 @@ public class SpielTests
         spiel.Play();
         var result = spiel.GetSpielstand();
         //Assert
-        Assert.Equal("Love:Love",result);
+        Assert.Equal("Love-All",result);
     }
 }
 
@@ -43,9 +43,9 @@ public class Spiel
 
     private bool unentschieden;
 
-    private SpielregelCalculator spielRegelCalculator;
+    private SpielRegelCalculator spielRegelCalculator;
     
-    public Spiel(Player player1, Player player2,SpielregelCalculator spielRegelCalculator )
+    public Spiel(Player player1, Player player2,SpielRegelCalculator spielRegelCalculator )
     {
         this.player1 = player1;
         this.player2 = player2;
@@ -58,9 +58,9 @@ public class Spiel
         unentschieden = false;
     }
 
-    public void SetSpielstand(Player player)
+    public void SetSpielstand(Player setPlayer)
     {
-        player.SetSpielstandzhähler();
+        setPlayer.SetSpielstandzhähler();
     }
     public bool IsSpielIsRunning()
     {
@@ -69,7 +69,7 @@ public class Spiel
 
     public string GetSpielstand()
     {
-        return spielRegelCalculator.Calculate(player1,player2);
+        return spielRegelCalculator.Calculate(player1, player2);
     }
 }
 
@@ -78,23 +78,69 @@ public interface ISpielregelCalculator
    public string Calculate(Player player1, Player player2);
 }
 
-public interface IRules
+public class SpielRegelCalculator : ISpielregelCalculator
 {
-    public string Calculate(int stand1 , int stand2);
-}
-
-public class RuleHochzählen : IRules
-{
-    public string Calculate(int stand1, int stand2)
-    {
-        throw new NotImplementedException();
-    }
-}
-public class SpielregelCalculator : ISpielregelCalculator
-{
+    private SpielstandZähler score1 = 0;
+    private SpielstandZähler score2 = 0;
+    private SpielstandZähler tempScore = 0;
+    string score = "";
+    
     public string Calculate(Player player1, Player player2)
     {
-        return player1.GetSpielstandzhähler() + ":" + player2.GetSpielstandzhähler();
+        score1 = player1.GetSpielstandzhähler();
+        score2 = player2.GetSpielstandzhähler();
+        
+        if (score1.Equals(score2))
+        {
+            switch (score1)
+            {
+                case SpielstandZähler.Love:
+                    score = "Love-All";
+                    break;
+                case SpielstandZähler.Fifteen:
+                    score = "Fifteen-All";
+                    break;
+                case SpielstandZähler.Thirty:
+                    score = "Thirty-All";
+                    break;
+                default:
+                    score = "Deuce";
+                    break;
+
+            }
+        }
+        else if (score1 >= SpielstandZähler.Fourty || score2 >= SpielstandZähler.Fourty)
+        {
+            var minusResult = score1 - score2;
+            if (minusResult == 1) score = "Advantage player1";
+            else if (minusResult == -1) score = "Advantage player2";
+            else if (minusResult >= 2) score = "Win for player1";
+            else score = "Win for player2";
+        }
+        else
+        {
+            for (var i = 1; i < 3; i++)
+            {
+                if (i == 1) tempScore = score1;
+                else { score += "-"; tempScore = score2; }
+                switch (tempScore)
+                {
+                    case SpielstandZähler.Love:
+                        score += "Love";
+                        break;
+                    case SpielstandZähler.Fifteen:
+                        score += "Fifteen";
+                        break;
+                    case SpielstandZähler.Thirty:
+                        score += "Thirty";
+                        break;
+                    case SpielstandZähler.Fourty:
+                        score += "Forty";
+                        break;
+                }
+            }
+        }
+        return score;
     }
 }
 
@@ -116,7 +162,7 @@ public class Player
 
     public void SetSpielstandzhähler()
     {
-        this.spielstand++;
+        this.spielstand +=1;
     }
 }
 
@@ -125,7 +171,11 @@ public class Player
 public enum SpielstandZähler : ushort
 {
     Love = 0,
-    fünfzehn = 1,
-    dreizig = 2,
-    vierzig = 3
+    Fifteen = 1,
+    Thirty = 2,
+    Fourty = 3,
+    Deuce = 4,
+    Advantage = 5,
+    Game = 6
 }
+
