@@ -4,7 +4,7 @@ public class SpielTests
 {
     private  Player player1 = new Player("Holger Schwinge");
     private  Player player2 = new Player("Alex Gross");
-  
+
     [Fact]
     public void Game_Is_Started()
     {
@@ -27,7 +27,7 @@ public class SpielTests
         spiel.Play();
         var result = spiel.Spielstand();
         //Assert
-        Assert.Equal("(Love:Love)",result);
+        Assert.Equal("Love:Love",result);
     }
 }
 
@@ -42,8 +42,6 @@ public class Spiel
 
     private bool unentschieden;
 
-    private Spielstand spielStand = new Spielstand(0, 0);
-    
     public Spiel(Player player1, Player player2)
     {
         this.player1 = player1;
@@ -56,44 +54,48 @@ public class Spiel
         unentschieden = false;
     }
 
+    public void SetSpielstand(Player player)
+    {
+        player.SetSpielstandzhähler();
+    }
     public bool IsSpielIsRunning()
     {
         return spielStart;
     }
 
-    public object Spielstand()
+    public string Spielstand()
     {
-        return spielStand.ToString();
+        return player1.GetSpielstandzhähler() + ":" + player2.GetSpielstandzhähler();
     }
 }
 
 public class Player
 {
     private string fullName;
+    private SpielstandZähler spielstand;
     public Player(string fullName)
     {
         this.fullName = fullName;
+        this.spielstand = 0;
     }
-}
 
-public readonly struct Spielstand
-{
-    public Spielstand(SpielstandZähler x, SpielstandZähler y)
+    public SpielstandZähler GetSpielstandzhähler()
     {
-        X = x;
-        Y = y;
+        return spielstand;
     }
 
-    public SpielstandZähler X { get; init; }
-    public SpielstandZähler Y { get; init; }
-
-    public override string ToString() => $"({X}:{Y})";
+    public void SetSpielstandzhähler()
+    {
+        this.spielstand++;
+    }
 }
+
+
 
 public enum SpielstandZähler : ushort
 {
     Love = 0,
     fünfzehn = 1,
-    dreizig = 100,
-    vierzig = 200
+    dreizig = 2,
+    vierzig = 3
 }
