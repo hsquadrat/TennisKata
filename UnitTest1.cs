@@ -4,7 +4,7 @@ public class SpielTests
 {
     private Player _player1 = new Player();
     private Player _player2 = new Player();
-    
+
     private  SpielRegelCalculator _spielregelCalculator = new();
 
     [Fact]
